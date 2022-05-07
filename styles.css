@@ -1,6 +1,42 @@
 /* styles.css */
 body {
-    background-color: black;
-    color: aliceblue;
+    background-color: #2C4251;
+    color: #E9ECF5;
+    font-size: 14pt;
 }
+h1   {
+    color: #A3C3D9;
+}
+#topbar {
+    background-color: #1a2c38;
+    padding: 15px;
+    margin: -10px;
+    margin-bottom: 10px;
+}
+#search-form {
+    display: inline;
+}
+#submit {
+    background-color: #152027;/*0c1216*/
+    color: #E9ECF5;
+    border: none;
+    text-shadow: none;
+    height: 30px;
+    width: 70px;
+    text-align: center;
+    font-weight: bold;
+}
+#submit:hover {
+    background-color: #263946;
+}
+#searchText {
+    height: 20px;
+}
+#main {
+    width: 80%;
+    max-width: 800px;
+    margin: auto;
+    overflow: scroll;
+}
+
 /* Add styles here to customize the appearance of your app */

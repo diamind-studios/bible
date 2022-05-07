@@ -5,18 +5,34 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link href="./styles.css" rel="stylesheet">
-    <title>Hello World!</title>
+    <title>Every Bible</title>
   </head>
   <body>
-    <h1>Bible</h1>
-    <form action="#" onsubmit="return search(this);">
-      <label for="fname">First name:</label><br>
-      <input type="text">
-    </form>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-
+    <nav id="topbar">
+      <form id="search-form" action="#">
+        <input id="searchText" type="text" placeholder="Search">
+        <input id="submit" type="submit">
+      </form>
+    </nav>
+    <nav id="tabbar">
+      <span id="tabs">
+        <select>
+          <option value="1">KJV</option>
+        </select>
+      </span>
+      <span id="newtab" onclick="newtab()">+</span>
+    </nav>
+    <div id="main">
+      <span id="1">
+        <!--
+        We are using Node.js <span id="node-version"></span>,
+        Chromium <span id="chrome-version"></span>,
+        and Electron <span id="electron-version"></span>.
+        <br>-->
+        <h1 id="bible-header"></h1>
+        <span id="bible-text"></span>
+      </span>
+    </div>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
   </body>
