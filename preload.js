@@ -15,15 +15,25 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   //select all the translations and sources and add them to the selectors
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
+  const tabs = document.getElementById('tabs') 
+  for (tab of tabs.children) {
+    getVersions(tab.id)
+    //eventually pull open tabs from previous session, with the corrected "selected" option for each
   }
+  
 })
 
-
-const reset = async (selector) => {
-  const element = document.getElementById(selector)
-  if (element) element.innerText = ''
+const getVersions = async (tabId=1,selected='2translation') => { // selected param should be an id+source type 
+  const query = `select name, id, 'source' as type from sources s
+  union select name, id, 'translation' as type from translations t 
+  order by type desc, id;`
+  await db.all(query, async (err, rows) => {
+    var output = ''
+    for (row of rows) {
+      output += `<option value="${row.id}" type="${row.type}" ${row.id+row.type == selected ? 'selected' : ''}>${row.name}</option>`
+    }
+    display(tabId, output)
+  });
 }
 
 const display = async (selector, text) => {
@@ -37,8 +47,6 @@ const parseQuery = async (searchText) => {
   rtn.book = searchText.slice(0,searchText.length-1).join(' ')
   rtn.chapter = searchText.slice(searchText.length-1).join(' ').split(':')[0]||'1'
   rtn.verse = searchText.slice(searchText.length-1).join(' ').split(':')[1]||'1'
-  rtn.type = 'translation'//document get chosen translation
-  rtn.id = '2'//document get chosen translation
   return rtn
 }
 
@@ -46,9 +54,9 @@ const parseQuery = async (searchText) => {
 const joinVerses = async (rows, delimiter=' ') => {
   output = ''
   for (let row of rows) {
-    output += `<b>${row.verse}</b>${delimiter}${row.verse_text}<br><br>`
+    output += `<b>${row.verse}.</b> ${delimiter}${row.verse_text}<br><br>`
   }
-  return output
+  return output||'<i>Passage unavailable for the selected Bible.</i>'
 }
 
 const getBook = async (id, searchText) => {
@@ -64,27 +72,53 @@ const getBook = async (id, searchText) => {
     //everything you wanna do with the data returned has to go in here
     if (rows.length < 1) return
     payload.book = rows[0].name
-    getText(id, payload)
+    for (element of document.getElementById('tabs').children) {
+      getTranslationText(element.id, payload)
+    }
     display('bible-header',`${payload.book} ${payload.chapter}`)
   });
 }
 
-const getText = async (id, payload) => {
-  payload.query = `select 
-    verse_text, 
-    verse
-  from books b 
-  inner join ${payload.type}_text t
-    on t.book = b.id
-  where b.name like '${payload.book}'
-    and t.${payload.type}_id = ${payload.id}
-    and t.chapter = ${payload.chapter};`
+const buildQuery = async (payload) => {
+  queries = {
+    'translation': `select 
+      verse_text, 
+      verse
+    from books b 
+    inner join ${payload.type}_text t
+      on t.book = b.id
+    where b.name = '${payload.book}'
+      and t.${payload.type}_id = ${payload.typeId}
+      and t.chapter = ${payload.chapter};`,
+    'source': `select 
+      group_concat(word||COALESCE(punctuation,''),' ') as verse_text, 
+      verse
+    from books b 
+    inner join ${payload.type}_text t
+      on t.book = b.id
+    where b.name = '${payload.book}'
+      and t.${payload.type}_id = ${payload.typeId}
+      and t.chapter = ${payload.chapter}
+    group by verse;`
+  }
+  return queries[payload.type]
+}
+
+const getTranslationText = async (id, payload) => {
+  const select = document.getElementById(id)
+  const selectedIndex = select.selectedIndex
+  payload.typeId = select[selectedIndex].value//document get chosen translation
+  payload.type = select[selectedIndex].getAttribute('type')
+  payload.translation = select[selectedIndex].text
+  
+  const query = await buildQuery(payload)
+
   //in future, query book name first based off abbreviation
-  await db.all(payload.query, async (err, rows) => {
+  await db.all(query, async (err, rows) => {
     //everything you wanna do with the data returned has to go in here
-    if (rows.length < 1) return
-    const output = await joinVerses(rows,' ')
-    display(id, output)
+    //if (rows.length < 1) return
+    const output = `<h2>${payload.translation}</h2>` + await joinVerses(rows,' ')
+    display('tab'+id, output)
   });
 }
 
@@ -94,9 +128,6 @@ const getText = async (id, payload) => {
 contextBridge.exposeInMainWorld('DB', {
   getPassage: (selector,searchText) => {
     getBook(selector,searchText)
-  },
-  test(dataPayload) {
-    return dataPayload// await getBookNames()
   }
 })
 

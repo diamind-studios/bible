@@ -7,6 +7,9 @@ body {
 h1   {
     color: #A3C3D9;
 }
+i {
+    color: lightgray;
+}
 #topbar {
     background-color: #1a2c38;
     padding: 15px;
@@ -37,6 +40,9 @@ h1   {
     max-width: 800px;
     margin: auto;
     overflow: scroll;
+}
+#main b {
+    color: white;
 }
 
 /* Add styles here to customize the appearance of your app */
