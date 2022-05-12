@@ -1,48 +1,87 @@
 /* styles.css */
 body {
-    background-color: #2C4251;
+    background-color: #152027;
     color: #E9ECF5;
     font-size: 14pt;
 }
-h1   {
+h1 {
     color: #A3C3D9;
+}
+h2 {
+    margin: 15px;
+    font-size: 14pt;
 }
 i {
     color: lightgray;
+}
+optgroup {
+    font-weight: bold;
+}
+button {
+    background-color: #152027;
+    color: #E9ECF5;
+    border: none;
+    height: 30px;
+    width: 30px;
+    vertical-align: middle;
+}
+button:hover {
+    background-color: #263946;
+}
+form {
+    display: inline;
 }
 #topbar {
     background-color: #1a2c38;
     padding: 15px;
     margin: -10px;
     margin-bottom: 10px;
+    
 }
 #search-form {
     display: inline;
 }
 #submit {
-    background-color: #152027;/*0c1216*/
-    color: #E9ECF5;
-    border: none;
     text-shadow: none;
     height: 30px;
     width: 70px;
     text-align: center;
     font-weight: bold;
 }
-#submit:hover {
-    background-color: #263946;
-}
+
 #searchText {
     height: 20px;
 }
 #main {
-    width: 80%;
-    max-width: 800px;
+    width: 100%;
     margin: auto;
-    overflow: scroll;
+    text-align: center;
 }
 #main b {
     color: white;
+}
+#newtab {
+    background-color: #152027;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    user-select: none
+}
+#newtab:hover {
+    background-color: #1a2c38;
+}
+.icon {
+    font-size: 25px;
+}
+.tabBody {
+    background-color: #2C4251;
+    max-width: 800px;
+    width: 40%;
+    margin: 5px;
+    border-radius: 10px;
+    padding: 0px 10px;
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
 }
 
 /* Add styles here to customize the appearance of your app */

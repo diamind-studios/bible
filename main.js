@@ -3,7 +3,7 @@ const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('bible.db');
-
+app.allowRendererProcessReuse = true
 
 function createWindow () {
   // Create the browser window.
