@@ -3,9 +3,12 @@ body {
     background-color: #152027;
     color: #E9ECF5;
     font-size: 14pt;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 h1 {
     color: #A3C3D9;
+    font-family: 'Times New Roman', Times, serif;
 }
 h2 {
     margin: 15px;
@@ -13,6 +16,9 @@ h2 {
 }
 i {
     color: lightgray;
+}
+label {
+    color: orange;
 }
 optgroup {
     font-weight: bold;
@@ -52,14 +58,6 @@ form {
 #searchText {
     height: 20px;
 }
-#main {
-    width: 100%;
-    margin: auto;
-    text-align: center;
-}
-#main b {
-    color: white;
-}
 #newtab {
     background-color: #152027;
     padding: 5px 10px 5px 10px;
@@ -69,13 +67,26 @@ form {
 #newtab:hover {
     background-color: #1a2c38;
 }
+#bible-header {
+    text-align: center;
+}
+#container {
+    overflow: scroll;
+}
+#main {
+    margin: auto;
+    text-align: center;
+}
+#main b {
+    color: white;
+}
 .icon {
     font-size: 25px;
 }
 .tabBody {
     background-color: #2C4251;
     max-width: 800px;
-    width: 40%;
+    width: 40vw;
     margin: 5px;
     border-radius: 10px;
     padding: 0px 10px;

@@ -20,13 +20,13 @@ window.addEventListener('DOMContentLoaded', () => {
     getVersions(tab.id)
     //eventually pull open tabs from previous session, with the corrected "selected" option for each
   }
-  
 })
 
 const getVersions = async (tabId,selected='2translation') => { // selected param should be an id+source type 
   const query = `select name, id, 'source' as type from sources s where complete
   union select name, id, 'translation' as type from translations t where complete
   order by type desc, id;`
+  getBook('')
   await db.all(query, async (err, rows) => {
     var output = ''
     for (row of rows) {
@@ -83,7 +83,7 @@ const buildQuery = async (payload) => {
   return queries[payload.type]
 }
 
-const getBook = async (searchText) => {
+const getBook = async (searchText, displayAreas=document.getElementById('tabs').children) => {
   const searchPayload = await parseQuery(searchText)
   const query = `select 
     name
@@ -95,7 +95,7 @@ const getBook = async (searchText) => {
     //everything you wanna do with the data returned has to go in here
     if (rows.length < 1) return
     searchPayload.book = rows[0].name
-    for (element of document.getElementById('tabs').children) {
+    for (element of displayAreas) {
       getTextInfo(element.id, searchPayload)
     }
     display('bible-header',`${searchPayload.book} ${searchPayload.chapter}`)
@@ -132,11 +132,9 @@ const getTextInfo = async (id, searchPayload) => {
 const getText = async (id, payload) => {
   
   const query = await buildQuery(payload)
-  console.log(payload.textName + payload.typeId)
-
   await db.all(query, async (err, rows) => {
     //everything you wanna do with the data returned has to go in here
-    const output = `<h2>${payload.fullTextName}</h2>` + await joinVerses(rows,' ') + `<label>${payload.fullTextName}</label><br><i>LICENSE: ${payload.license||'Public Domain'}</i>`
+    const output = `<h2>${payload.fullTextName.toUpperCase()}</h2>` + await joinVerses(rows,' ') + `<label>${payload.fullTextName}</label><br>LICENSE: <i>${payload.license||'Public Domain'}</i>`
     display('tab'+id, output)
   });
 }
@@ -145,8 +143,8 @@ const getText = async (id, payload) => {
 
 // These functions are exposed for calling from front end
 contextBridge.exposeInMainWorld('DB', {
-  getPassage: (searchText) => {
-    getBook(searchText)
+  getPassage: (searchText, displayAreas=undefined) => {
+    getBook(searchText, displayAreas)
   },
   newTab: (tabId) => {
     getVersions(tabId)

@@ -7,22 +7,45 @@
 
 //\const sqlite3 = require('sqlite3').verbose();
 //var db = new sqlite3.Database('bible.db');
+searchText='Genesis 1:1'
 
 function search(event) {
     event.preventDefault();
-    const searchText = document.getElementById('searchText').value
+    searchText = document.getElementById('searchText').value
     if (!searchText) return    
     DB.getPassage(searchText)
   }
-function newTab() {
+  
+function newTab() { //create new tab for viewing scripture
     const tabs = document.getElementById('tabs')
     const main = document.getElementById('main')
     const tabCount = tabs.childElementCount
-    tabs.innerHTML += `<select id="${tabCount+1}" class="tab"></select>`
+    const tab = createTabElement(tabCount+1)
+    tabs.appendChild(tab)
+    //tabs.innerHTML += `<select id="${tabCount+1}" class="tab"></select>`
+
     main.innerHTML += `<div id="tab${tabCount+1}" class="tabBody"></div>`
+    if ((tabCount+1) * 40 > 100) {
+        main.style.width = `${(tabCount+1) * 50}%`
+    } else {
+        main.style.width = '100%'
+    }
     DB.newTab(tabCount+1)
 }
 
-//document.getElementById("search-button").addEventListener("click", search);
+function reselect(event) {
+    DB.getPassage(searchText,[event.target])
+}
+
+function createTabElement(id) {
+    let tab = document.createElement('select')
+    tab.id = `${id}`
+    tab.class = 'tab'
+    tab.addEventListener('change', reselect)
+
+    return tab
+}
+
+document.getElementById('1').addEventListener('change', reselect)
 document.getElementById("search-form").addEventListener("submit", search);
 document.getElementById("newtab").addEventListener("click", newTab, false);
