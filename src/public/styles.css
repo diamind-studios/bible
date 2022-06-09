@@ -1,13 +1,36 @@
 /* styles.css */
+
+/* original color scheme
+:root {
+    --primary-color: #152027;
+    --secondary-color: #2C4251;
+    --tertiary-color: #1a2c38;
+    --text-hover: #72623e;
+    --button-hover: #263946;
+    --primary-text-color: #E9ECF5;
+    --h-color: #A3C3D9;
+}
+*/
+:root {
+    --primary-color: #141414;
+    --secondary-color: #2D2D2D;
+    --tertiary-color: #282828;
+    --text-hover: #985E50;
+    --button-hover: #343434;
+    --primary-text-color: #E9ECF5;
+    --h-color: #d08c58;
+    --h2-color: #d5d8e0;
+}
+
 body {
-    background-color: #152027;
-    color: #E9ECF5;
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
     font-size: 14pt;
     font-family:Arial, Helvetica, sans-serif;
     overflow-x: hidden;
 }
 h1 {
-    color: #A3C3D9;
+    color: var(--h-color);
     font-family: 'Times New Roman', Times, serif;
 }
 h2 {
@@ -24,21 +47,21 @@ optgroup {
     font-weight: bold;
 }
 button {
-    background-color: #152027;
-    color: #E9ECF5;
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
     border: none;
     height: 30px;
     width: 30px;
     vertical-align: middle;
 }
 button:hover {
-    background-color: #263946;
+    background-color: var(--button-hover);
 }
 form {
     display: inline;
 }
 #topbar {
-    background-color: #1a2c38;
+    background-color: var(--tertiary-color);
     padding: 15px;
     margin: -10px;
     margin-bottom: 10px;
@@ -59,13 +82,13 @@ form {
     height: 20px;
 }
 #newtab {
-    background-color: #152027;
+    background-color: var(--primary-color);
     padding: 5px 10px 5px 10px;
     border-radius: 5px;
     user-select: none
 }
 #newtab:hover {
-    background-color: #1a2c38;
+    background-color: var(--tertiary-color);
 }
 #bible-header {
     text-align: center;
@@ -84,7 +107,7 @@ form {
     font-size: 25px;
 }
 .tabBody {
-    background-color: #2C4251;
+    background-color: var(--secondary-color);
     max-width: 800px;
     width: 40vw;
     margin: 5px;
@@ -95,10 +118,17 @@ form {
     vertical-align: top;
 }
 .word {
-    background-color: #2C4251;
+    background-color: var(--secondary-color);
+    cursor: default;
+    border-radius: 5px;
+    padding: 0px 2px 0px 2px;
+    margin: 0px -2px 0px -2px;
+    transition-delay: .04s;
+    
 }
 .word:hover {
-    background-color: #3e5e72;
+    background-color: var(--text-hover);
+    transition-delay: 0s;
 }
 
 /* Add styles here to customize the appearance of your app */
