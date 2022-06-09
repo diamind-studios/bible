@@ -12,6 +12,12 @@ const display = async (selector, text) => {
   if (element) element.innerHTML = text
 }
 
+const displayTag = async (selector, tag) => {
+  const element = document.getElementById(selector)
+  element.innerHTML = ''
+  if (tag) element.appendChild(tag)
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   //return
   //select all the translations and sources and add them to the selectors
@@ -51,11 +57,32 @@ const parseQuery = async (searchText) => {
 
 //joins rows from db
 const joinVerses = async (rows, delimiter=' ') => {
+  const tab = document.createElement('span')
   output = ''
   for (let row of rows) {
     output += `<b>${row.verse}.</b> ${delimiter}${row.verse_text}<br><br>`
   }
-  return output||'<i>Passage unavailable for the selected Bible.</i>'
+  tab.innerHTML = output||'<i>Passage unavailable for the selected Bible.</i>'
+  return tab
+}
+
+const joinWords = async (rows, delimiter=' ') => {
+  const tab = document.createElement('span')
+  let verse = 1
+  tab.innerHTML = `<b>${verse}.</b> `
+
+  for (row of rows) {
+    if (row.verse != verse) { // add verse number
+      verse = row.verse
+      tab.innerHTML += `<br><br><b>${row.verse}.</b> `
+    }
+    let word = document.createElement('span')
+    word.classList.add('word')
+    word.innerText = row.word+' '
+    tab.appendChild(word)
+  }
+  tab.innerHTML += '<br><br>'
+  return tab
 }
 
 const buildQuery = async (payload) => {
@@ -69,16 +96,16 @@ const buildQuery = async (payload) => {
     where b.name = '${payload.searchPayload.book}'
       and t.${payload.type}_id = ${payload.typeId}
       and t.chapter = ${payload.searchPayload.chapter};`,
-    'source': `select 
-      group_concat(word||COALESCE(punctuation,''),' ') as verse_text, 
+    'source': `select
+      id,
+      word||COALESCE(punctuation,'') as word,
       verse
     from books b 
     inner join ${payload.type}_text t
       on t.book = b.id
     where b.name = '${payload.searchPayload.book}'
       and t.${payload.type}_id = ${payload.typeId}
-      and t.chapter = ${payload.searchPayload.chapter}
-    group by verse;`
+      and t.chapter = ${payload.searchPayload.chapter};`
   }
   return queries[payload.type]
 }
@@ -130,12 +157,25 @@ const getTextInfo = async (id, searchPayload) => {
 }
 
 const getText = async (id, payload) => {
-  
+  joinFunc = {
+    "translation": joinVerses,
+    "source": joinWords
+  }
+
   const query = await buildQuery(payload)
   await db.all(query, async (err, rows) => {
     //everything you wanna do with the data returned has to go in here
-    const output = `<h2>${payload.fullTextName.toUpperCase()}</h2>` + await joinVerses(rows,' ') + `<label>${payload.fullTextName}</label><br>LICENSE: <i>${payload.license||'Public Domain'}</i>`
-    display('tab'+id, output)
+    const output = document.createElement('div')
+
+    const head = document.createElement('h2')
+    head.innerHTML = payload.fullTextName.toUpperCase()
+    output.appendChild(head)
+
+    const text = await joinFunc[payload.type](rows)
+
+    output.appendChild(text)//await joinVerses(rows))
+    output.innerHTML += `<label>${payload.fullTextName}</label><br>LICENSE: <i>${payload.license||'Public Domain'}</i>`
+    displayTag('tab'+id, output)
   });
 }
 

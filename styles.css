@@ -94,5 +94,11 @@ form {
     text-align: left;
     vertical-align: top;
 }
+.word {
+    background-color: #2C4251;
+}
+.word:hover {
+    background-color: #3e5e72;
+}
 
 /* Add styles here to customize the appearance of your app */
