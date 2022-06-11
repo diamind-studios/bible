@@ -46,6 +46,21 @@ function createTabElement(id) {
     return tab
 }
 
+function changeFontSize(event) {
+    const bibleText = document.getElementsByClassName('bibleText')
+    const fontElm = document.getElementById('font-size')
+    const fontSize = Number(fontElm.innerText) + Number(event.target.innerText+'1')
+    if (fontSize <= 5 || fontSize >= 25) {
+        return
+    }
+    fontElm.innerText = fontSize
+    for (let tab of bibleText) {
+        tab.style.fontSize = fontSize+'pt'
+    }
+}
+
 document.getElementById('1').addEventListener('change', reselect)
 document.getElementById("search-form").addEventListener("submit", search);
 document.getElementById("newtab").addEventListener("click", newTab, false);
+document.getElementById("text-smaller").addEventListener("click", changeFontSize, false);
+document.getElementById("text-bigger").addEventListener("click", changeFontSize, false);

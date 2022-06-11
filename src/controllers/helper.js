@@ -1,7 +1,7 @@
 //build query for pulling chapter text
 const buildQuery = async (payload) => {
   queries = {
-    'translation': `select 
+    translation: `select 
       verse_text, 
       verse
     from books b 
@@ -10,8 +10,8 @@ const buildQuery = async (payload) => {
     where b.name = '${payload.searchPayload.book}'
       and t.${payload.type}_id = ${payload.typeId}
       and t.chapter = ${payload.searchPayload.chapter};`,
-    'source': `select
-      id,
+    source: `select
+      t.source_id||t.word_number||t.book||t.chapter||t.verse as p_key,
       word||COALESCE(punctuation,'') as word,
       verse
     from books b 
@@ -27,6 +27,7 @@ const buildQuery = async (payload) => {
 //joins rows from db
 const joinVerses = async (rows, delimiter=' ') => {
   const tab = document.createElement('span')
+  tab.classList.add('bibleText')
   output = ''
   for (let row of rows) {
     output += `<b>${row.verse}.</b> ${delimiter}${row.verse_text}<br><br>`
@@ -37,21 +38,36 @@ const joinVerses = async (rows, delimiter=' ') => {
   
 const joinWords = async (rows, delimiter=' ') => {
   const tab = document.createElement('span')
+  tab.classList.add('bibleText')
+  if (!rows || rows.length < 1) {
+    console.log('empty')
+    tab.innerHTML = '<i>Passage unavailable for the selected Bible.</i><br><br>'
+    return tab
+  }
   let verse = 1
   tab.innerHTML = `<b>${verse}.</b> `
 
+  const wordPrototype = document.createElement('span')
+  wordPrototype.classList.add('word')
+  
+  const start = new Date().getTime()
+  let chapterHtml = ''
+  console.log('start',start)
   for (row of rows) {
     if (row.verse != verse) { // add verse number
       verse = row.verse
-      tab.innerHTML += `<br><br><b>${row.verse}.</b> `
+      chapterHtml += `<br><br><b>${row.verse}.</b> `
     }
-    let word = document.createElement('span')
-    word.classList.add('word')
+    const word = wordPrototype.cloneNode()
     word.innerText = row.word
-    tab.appendChild(word)
-    tab.innerHTML += ' '
+    word.setAttribute("value", row.p_key);
+    chapterHtml += ' ' + word.outerHTML + ' '
   }
-  tab.innerHTML += '<br><br>'
+  chapterHtml += '<br><br>'
+  tab.innerHTML += chapterHtml
+  const end = new Date().getTime()
+  console.log('end',end)
+  console.log((end - start)/1000,'seconds')
   return tab
 }
 

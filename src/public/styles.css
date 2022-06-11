@@ -53,6 +53,7 @@ button {
     height: 30px;
     width: 30px;
     vertical-align: middle;
+    border-radius: 5px;
 }
 button:hover {
     background-color: var(--button-hover);
@@ -77,9 +78,19 @@ form {
     text-align: center;
     font-weight: bold;
 }
-
 #searchText {
     height: 20px;
+}
+#option-panel {
+    background-color: var(--button-hover);
+    visibility: hidden;
+    position: absolute;
+    border-radius: 5px;
+    border-color: #7b6060;
+    border-width: 2px;
+    border-style: solid;
+    z-index: 2;
+    min-height: 100px;
 }
 #newtab {
     background-color: var(--primary-color);
@@ -116,6 +127,7 @@ form {
     display: inline-block;
     text-align: left;
     vertical-align: top;
+    font-family: serif;
 }
 .word {
     background-color: var(--secondary-color);

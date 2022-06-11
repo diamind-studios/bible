@@ -16,12 +16,16 @@ const getText = async (id, payload) => {
     const head = document.createElement('h2')
     head.innerHTML = payload.fullTextName.toUpperCase()
     output.appendChild(head)
-
-    const text = await joinFunc[payload.type](rows)
-
-    output.appendChild(text)
+    const tab = await joinFunc[payload.type](rows)
+    const fontSize = Number(document.getElementById('font-size').innerText)
+    tab.style.fontSize = fontSize+'pt'
+    output.appendChild(tab)
     output.innerHTML += `<label>${payload.fullTextName}</label><br>LICENSE: <i>${payload.license||'Public Domain'}</i>`
-    helper.displayTag('tab'+id, output)
+    await helper.displayTag('tab'+id, output)
+    
+    for (word of document.getElementById('tab'+id).getElementsByClassName('word')) {
+      word.addEventListener('click', (event) => { console.log(event.target.getAttribute('value')) })
+    }
   });
 }
 
