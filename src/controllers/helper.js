@@ -11,7 +11,7 @@ const buildQuery = async (payload) => {
       and t.${payload.type}_id = ${payload.typeId}
       and t.chapter = ${payload.searchPayload.chapter};`,
     source: `select
-      t.source_id||t.word_number||t.book||t.chapter||t.verse as p_key,
+      t.source_id||'|'||t.word_number||'|'||t.book||'|'||t.chapter||'|'||t.verse as p_key,
       word||COALESCE(punctuation,'') as word,
       verse
     from books b 
@@ -71,6 +71,16 @@ const joinWords = async (rows, delimiter=' ') => {
   return tab
 }
 
+const buildWordBox = async(row) => {
+  const wordBox = `<b>${row.word||na}</b><br>
+    <em>${row.transliteration}</em><br><br>
+    ${row.concordance} Number: ${row.c_id.toUpperCase()||na}<br>
+    Parsing: <a class="hover-desc" data-title="${row.description}">${row.title}<a><br>
+    Definition: ${row.definition}<br>
+    Origin: ${row.origin}`
+  return wordBox
+}
+
 const displayTag = async (selector, tag) => {
   const element = document.getElementById(selector)
   element.innerHTML = ''
@@ -100,6 +110,7 @@ module.exports = {
   'joinVerses': joinVerses,
   'joinWords': joinWords,
   'displayTag': displayTag,
+  'buildWordBox': buildWordBox,
   'parseSearchQuery': parseSearchQuery,
   'display': display
 }

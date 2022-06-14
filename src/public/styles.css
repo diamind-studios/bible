@@ -92,6 +92,13 @@ form {
     z-index: 2;
     min-height: 100px;
 }
+#popup-box {
+    position: absolute;
+    border-radius: 7px;
+    background-color: wheat;
+    color: var(--primary-color);
+    padding: 10px;
+}
 #newtab {
     background-color: var(--primary-color);
     padding: 5px 10px 5px 10px;
@@ -136,11 +143,19 @@ form {
     padding: 0px 2px 0px 2px;
     margin: 0px -2px 0px -2px;
     transition-delay: .04s;
-    
 }
 .word:hover {
     background-color: var(--text-hover);
     transition-delay: 0s;
+}
+.hover-desc:hover::after {
+    content: attr(data-title);
+    padding: 5px;
+    width: 250px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: #dc143c;
+    color: white;
 }
 
 /* Add styles here to customize the appearance of your app */

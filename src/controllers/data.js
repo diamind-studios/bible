@@ -1,14 +1,14 @@
-const helper = require('./helper')
+const {buildQuery, joinVerses, joinWords, displayTag, buildWordBox, parseSearchQuery, display} = require('./helper')
 const sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('./bible.db');
 
 const getText = async (id, payload) => {
   joinFunc = {
-    "translation": helper.joinVerses,
-    "source": helper.joinWords
+    "translation": joinVerses,
+    "source": joinWords
   }
 
-  const query = await helper.buildQuery(payload)
+  const query = await buildQuery(payload)
   await db.all(query, async (err, rows) => {
     //everything you wanna do with the data returned has to go in here
     const output = document.createElement('div')
@@ -21,10 +21,14 @@ const getText = async (id, payload) => {
     tab.style.fontSize = fontSize+'pt'
     output.appendChild(tab)
     output.innerHTML += `<label>${payload.fullTextName}</label><br>LICENSE: <i>${payload.license||'Public Domain'}</i>`
-    await helper.displayTag('tab'+id, output)
+    await displayTag('tab'+id, output)
     
     for (word of document.getElementById('tab'+id).getElementsByClassName('word')) {
-      word.addEventListener('click', (event) => { console.log(event.target.getAttribute('value')) })
+      word.addEventListener('click', (event) => {
+        //create display box. Then call getWordDetails and pass id of popup box
+        //console.log(event.target.getAttribute('value')) 
+        getWordDetails(event.target)
+      })
     }
   });
 }
@@ -58,7 +62,7 @@ const getTextInfo = async (id, searchPayload) => {
 }
 
 const getBook = async (searchText, displayAreas=document.getElementById('tabs').children) => {
-  const searchPayload = await helper.parseSearchQuery(searchText)
+  const searchPayload = await parseSearchQuery(searchText)
   const query = `select 
     name
   from books b 
@@ -72,7 +76,7 @@ const getBook = async (searchText, displayAreas=document.getElementById('tabs').
     for (element of displayAreas) {
       getTextInfo(element.id, searchPayload)
     }
-    helper.display('bible-header',`${searchPayload.book} ${searchPayload.chapter}`)
+    display('bible-header',`${searchPayload.book} ${searchPayload.chapter}`)
   });
 }
 
@@ -87,8 +91,29 @@ const getVersions = async (tabId,selected='2translation') => { // selected param
       if (row.id == 1) output+= `<optgroup label="${row.type[0].toUpperCase()+row.type.slice(1)}:">`
       output += `<option value="${row.id}" type="${row.type}" ${row.id+row.type == selected ? 'selected' : ''}>${row.name}</option>`
     }
-    helper.display(tabId, output)
+    display(tabId, output)
   });
+}
+
+const getWordDetails = async (wordElm) => {
+  const pKey = wordElm.getAttribute('value')
+  const na = 'N/A'
+  const query = `select 
+      c.*,
+      p.title,
+      p.description
+    from source_text t
+    inner join concordance c
+      on c.id = t.concordance_id
+    inner join parsing p
+      on p.id = t.parsing
+    where t.source_id||'|'||t.word_number||'|'||t.book||'|'||t.chapter||'|'||t.verse = '${pKey}'`
+
+  await db.all(query, async (err, rows) => {
+    if (err) {console.error(err)}
+    const wordBox = await buildWordBox(rows[0])
+    document.getElementById('popup-box').innerHTML = wordBox
+  })
 }
 
 module.exports = {
